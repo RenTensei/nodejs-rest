@@ -1,3 +1,8 @@
 {
-  "ignore": ["node_modules", "models/contacts.json"]
+  "exec": "ts-node -P tsconfig.json src/index.ts",
+  "ext": "ts",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "watch": ["src/**/*"]
 }
