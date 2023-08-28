@@ -32,6 +32,8 @@ app.use((err: Error | HttpError | ZodError, req: Request, res: Response, next: N
       details: fromZodError(err).message,
     });
   }
+
+  console.log(err.message);
   res.status(500).json({ message: 'Internal Server Error. Try again later!' });
 });
 

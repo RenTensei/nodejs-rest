@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const ContactDataSchema = z.object({
-  id: z.string(),
+  _id: z.string(),
   name: z.string(),
   email: z.string().email(),
   phone: z.string(),
