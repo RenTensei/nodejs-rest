@@ -1,6 +1,10 @@
-import { Request, Response, Router } from 'express';
+import { Request, RequestHandler, Response, Router } from 'express';
 
-import { UpdateContactDataSchema, type IContactData } from '../../models/contact.schema.ts';
+import {
+  UpdateContactDataSchema,
+  type IContactData,
+  UpdateFavoriteSchema,
+} from '../../models/contact.schema.ts';
 import handlerWrapper from '../../helpers/reqHandlerWrapper.ts';
 import { Contact } from '../../models/Contact.ts';
 import HttpError from '../../helpers/HttpError.ts';
@@ -43,6 +47,18 @@ router.put(
     const contactId = req.params.contactId;
     const validatedBody = UpdateContactDataSchema.parse(req.body);
     const updatedContact = await Contact.findByIdAndUpdate(contactId, validatedBody);
+    if (!updatedContact) throw new HttpError(404, 'Not found');
+    res.json(updatedContact);
+  })
+);
+
+router.patch(
+  '/:contactId',
+  isValidId,
+  handlerWrapper<{ contactId: string }>(async (req, res: Response<IContactData>) => {
+    const contactId = req.params.contactId;
+    const validatedBody = UpdateFavoriteSchema.parse(req.body);
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, validatedBody, { new: true });
     if (!updatedContact) throw new HttpError(404, 'Not found');
     res.json(updatedContact);
   })

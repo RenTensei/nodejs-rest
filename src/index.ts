@@ -8,6 +8,7 @@ mongoose
   .connect(process.env.MONGO_CONNECTION_STRING || '')
   .then(() => {
     app.listen(3000, () => {
+      console.log('Database connection successful');
       console.log('Server running. Use our API on port: 3000');
     });
   })
