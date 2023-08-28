@@ -1,7 +1,6 @@
-import { Schema, model } from 'mongoose';
-import { IContactData } from './contact.schema';
+const { Schema, model } = require('mongoose');
 
-const contactSchema = new Schema<IContactData>(
+const contactSchema = new Schema(
   {
     name: {
       type: String,
@@ -21,4 +20,6 @@ const contactSchema = new Schema<IContactData>(
   { versionKey: false, timestamps: true }
 );
 
-export const Contact = model('Contact', contactSchema);
+const Contact = model('Contact', contactSchema);
+
+module.exports = { Contact };

@@ -1,20 +1,16 @@
-import { Request, RequestHandler, Response, Router } from 'express';
+const { Router } = require('express');
 
-import {
-  UpdateContactDataSchema,
-  type IContactData,
-  UpdateFavoriteSchema,
-} from '../../models/contact.schema.ts';
-import handlerWrapper from '../../helpers/reqHandlerWrapper.ts';
-import { Contact } from '../../models/Contact.ts';
-import HttpError from '../../helpers/HttpError.ts';
-import { isValidId } from '../../middlewares/isValidId.ts';
+const { UpdateContactDataSchema, UpdateFavoriteSchema } = require('../../models/contact.schema');
+const handlerWrapper = require('../../helpers/reqHandlerWrapper');
+const { Contact } = require('../../models/Contact');
+const HttpError = require('../../helpers/HttpError');
+const { isValidId } = require('../../middlewares/isValidId');
 
 const router = Router();
 
 router.get(
   '/',
-  handlerWrapper(async (_, res: Response<IContactData[]>) => {
+  handlerWrapper(async (_, res) => {
     const contacts = await Contact.find();
     res.json(contacts);
   })
@@ -23,7 +19,7 @@ router.get(
 router.get(
   '/:contactId',
   isValidId,
-  handlerWrapper<{ contactId: string }>(async (req, res: Response<IContactData>) => {
+  handlerWrapper(async (req, res) => {
     const contactId = req.params.contactId;
     const contact = await Contact.findById(contactId);
     if (!contact) throw new HttpError(404, 'Not found');
@@ -33,7 +29,7 @@ router.get(
 
 router.post(
   '/',
-  handlerWrapper(async (req: Request, res: Response<IContactData>) => {
+  handlerWrapper(async (req, res) => {
     const validatedBody = UpdateContactDataSchema.parse(req.body);
     const addedContact = await Contact.create(validatedBody);
     res.status(201).json(addedContact);
@@ -43,7 +39,7 @@ router.post(
 router.put(
   '/:contactId',
   isValidId,
-  handlerWrapper<{ contactId: string }>(async (req, res: Response<IContactData>) => {
+  handlerWrapper(async (req, res) => {
     const contactId = req.params.contactId;
     const validatedBody = UpdateContactDataSchema.parse(req.body);
     const updatedContact = await Contact.findByIdAndUpdate(contactId, validatedBody);
@@ -55,7 +51,7 @@ router.put(
 router.patch(
   '/:contactId',
   isValidId,
-  handlerWrapper<{ contactId: string }>(async (req, res: Response<IContactData>) => {
+  handlerWrapper(async (req, res) => {
     const contactId = req.params.contactId;
     const validatedBody = UpdateFavoriteSchema.parse(req.body);
     const updatedContact = await Contact.findByIdAndUpdate(contactId, validatedBody, { new: true });
@@ -67,7 +63,7 @@ router.patch(
 router.delete(
   '/:contactId',
   isValidId,
-  handlerWrapper<{ contactId: string }>(async (req, res: Response<{ message: string }>) => {
+  handlerWrapper(async (req, res) => {
     const contactId = req.params.contactId;
     const removedContact = await Contact.findByIdAndDelete(contactId);
     if (!removedContact) throw new HttpError(404, 'Not found');
@@ -75,4 +71,4 @@ router.delete(
   })
 );
 
-export default router;
+module.exports = router;
