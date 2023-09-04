@@ -71,9 +71,9 @@ const updateAvatar = async (req, res) => {
   const { filename, path: tempPath } = req.file;
 
   const stablePath = path.join(constants.avatarStoragePath, filename);
-  Jimp.read(tempPath).then(image => {
-    image.resize(250, 250).write(stablePath + '.' + image.getExtension());
-  });
+
+  const image = await Jimp.read(tempPath);
+  image.resize(250, 250).write(stablePath);
   await fs.unlink(tempPath);
 
   const avatarURL = path.join('avatars', filename);
