@@ -1,9 +1,14 @@
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
 const bcrypt = require('bcrypt');
+const fs = require('fs/promises');
 
 const { handlerWrapper, HttpError } = require('../helpers');
 const { UserModel } = require('../models/User/User');
 const { UserValidationSchema } = require('../models/User/user.schema');
+const path = require('path');
+const { constants } = require('../helpers');
+const Jimp = require('jimp');
 
 const register = async (req, res) => {
   const validatedBody = UserValidationSchema.parse(req.body);
@@ -11,7 +16,12 @@ const register = async (req, res) => {
   if (existingUserEmail) throw new HttpError('409', 'Email already in use');
 
   const hashedPassword = await bcrypt.hash(validatedBody.password, 10);
-  const newUser = await UserModel.create({ email: validatedBody.email, password: hashedPassword });
+  const avatarURL = gravatar.url(validatedBody.email);
+  const newUser = await UserModel.create({
+    email: validatedBody.email,
+    password: hashedPassword,
+    avatarURL,
+  });
 
   res.status(201).json({ user: { email: newUser.email, subscription: newUser.subscription } });
 };
@@ -57,9 +67,25 @@ const current = async (req, res) => {
   });
 };
 
+const updateAvatar = async (req, res) => {
+  const { filename, path: tempPath } = req.file;
+
+  const stablePath = path.join(constants.avatarStoragePath, filename);
+  Jimp.read(tempPath).then(image => {
+    image.resize(250, 250).write(stablePath + '.' + image.getExtension());
+  });
+  await fs.unlink(tempPath);
+
+  const avatarURL = path.join('avatars', filename);
+  await UserModel.findByIdAndUpdate(req.user._id, { avatarURL });
+
+  res.json({ avatarURL });
+};
+
 module.exports = {
   register: handlerWrapper(register),
   login: handlerWrapper(login),
   logout: handlerWrapper(logout),
   current: handlerWrapper(current),
+  updateAvatar: handlerWrapper(updateAvatar),
 };
