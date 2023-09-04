@@ -6,12 +6,12 @@ const authMiddleware = async (req, _, next) => {
   const authHeader = req.headers.authorization || '';
 
   const [bearer, token] = authHeader.split(' ');
-  if (bearer !== 'Bearer') throw new jwt.JsonWebTokenError();
+  if (bearer !== 'Bearer' || !token) throw new jwt.JsonWebTokenError();
 
   const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
   const user = await UserModel.findById(id);
-  if (!user || !user.token || user.token !== token) throw new jwt.JsonWebTokenError();
+  if (!user || user.token !== token) throw new jwt.JsonWebTokenError();
   req.user = user;
 
   next();
