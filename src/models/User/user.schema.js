@@ -5,4 +5,8 @@ const UserValidationSchema = z.object({
   password: z.string(),
 });
 
-module.exports = { UserValidationSchema };
+const EmailValidationSchema = z.object({
+  email: z.string().email(),
+});
+
+module.exports = { UserValidationSchema, EmailValidationSchema };

@@ -12,6 +12,10 @@ router.post('/logout', authMiddleware, controller.logout);
 
 router.get('/current', authMiddleware, controller.current);
 
+router.get('/verify/:verificationToken', controller.verify);
+
+router.post('/verify', controller.resend);
+
 router.patch(
   '/avatars',
   authMiddleware,
