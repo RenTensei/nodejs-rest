@@ -1,9 +1,12 @@
-how to start project:
+**How to Start Project:**
 
-1. setup local variables based on .env.example
+1. Setup local variables based on `.env.example`
 
-2. run commands:
+2. Run the following commands:
 
-docker build . -t nodecontacts
-
-docker run -d -p 3000:8080 nodecontacts
+   ```bash
+   docker build . -t nodecontacts
+   ```
+   ```bash
+   docker run -d -p 3000:8080 nodecontacts
+   ```
