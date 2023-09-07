@@ -6,4 +6,4 @@ const isValidId = (req, res, next) => {
   isValidObjectId(contactId) ? next() : next(new HttpError(400, `${contactId} is not a valid id!`));
 };
 
-module.exports = { isValidId };
+module.exports = isValidId;
